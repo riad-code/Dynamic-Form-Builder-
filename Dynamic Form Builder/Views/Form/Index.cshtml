@@ -1,0 +1,42 @@
+﻿@model List<Dynamic_Form_Builder.Models.Form>
+
+@{
+    ViewData["Title"] = "All Forms";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">All Forms</h4>
+            <a class="btn btn-sm btn-success" asp-controller="Form" asp-action="Create">+ Create New</a>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <p class="text-muted">No forms created yet.</p>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th style="width: 150px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var form in Model)
+                        {
+                            <tr>
+                                <td>@form.Title</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="/Form/Preview/@form.FormId">Preview</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

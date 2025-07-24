@@ -1,0 +1,39 @@
+﻿@model Dynamic_Form_Builder.Models.Form
+
+@{
+    ViewData["Title"] = "Edit Form";
+}
+
+<div class="container mt-4">
+    <h3>Edit Form: @Model.Title</h3>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="FormId" />
+
+        <div class="mb-3">
+            <label class="form-label">Form Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div id="dropdownContainer">
+            @for (int i = 0; i < Model.Fields.Count; i++)
+            {
+                <div class="dropdown-field border rounded p-3 mb-3">
+                    <label class="form-label"><strong>@Model.Fields[i].Label</strong></label>
+                    <input type="hidden" asp-for="@Model.Fields[i].Label" />
+                    <select asp-for="@Model.Fields[i].SelectedOption" class="form-select mb-2">
+                        <option value="">Select Item</option>
+                        <option value="Option 1">Option 1</option>
+                        <option value="Option 2">Option 2</option>
+                        <option value="Option 3">Option 3</option>
+                    </select>
+                    
+                </div>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
