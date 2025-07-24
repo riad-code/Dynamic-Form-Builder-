@@ -1,50 +1,32 @@
-﻿@model Dynamic_Form_Builder.Models.Form
-
-@{
-    ViewData["Title"] = "Dynamic Form Builder";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+    ViewData["Title"] = "Create Dynamic Form";
 }
 
 <div class="container mt-4">
     <h4><i class="bi bi-tags-fill"></i> Dynamic Form Builder</h4>
 
-    <form method="post" asp-action="Create" id="formBuilder">
+    <form id="formBuilder">
         <div class="card p-3">
             <div class="mb-3">
                 <label class="form-label"><strong>Form Title</strong></label>
-                <input type="text" name="Title" class="form-control" placeholder="Form Title.." required />
+                <input type="text" id="formTitle" class="form-control" placeholder="Form Title.." required />
             </div>
 
             <div id="dropdownFields">
-                <div class="dropdown-field mb-3 border p-2 rounded">
-                    <label><strong>Level 1</strong></label>
-                    <input type="hidden" name="Fields[0].Label" value="Level 1" />
-                    <select name="Fields[0].SelectedOption" class="form-select mb-2">
-                        <option value="">Select Item</option>
-                        <option value="Option 1">Option 1</option>
-                        <option value="Option 2">Option 2</option>
-                        <option value="Option 3">Option 3</option>
-                    </select>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="Fields[0].IsRequired" />
-                        <label class="form-check-label text-danger">Required *</label>
+                <!-- Default dropdowns -->
+                @for (var i = 0; i < 2; i++)
+                {
+                    <div class="dropdown-field mb-3 border p-2 rounded">
+                        <label><strong>Level @(i + 1)</strong></label>
+                        <input type="hidden" value="Level @(i + 1)" />
+                        <select class="form-select mb-2">
+                            <option value="">Select Item</option>
+                            <option value="Option 1">Option 1</option>
+                            <option value="Option 2">Option 2</option>
+                            <option value="Option 3">Option 3</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="dropdown-field mb-3 border p-2 rounded">
-                    <label><strong>Level 2</strong></label>
-                    <input type="hidden" name="Fields[1].Label" value="Level 2" />
-                    <select name="Fields[1].SelectedOption" class="form-select mb-2">
-                        <option value="">Select Item</option>
-                        <option value="Option 1">Option 1</option>
-                        <option value="Option 2">Option 2</option>
-                        <option value="Option 3">Option 3</option>
-                    </select>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="Fields[1].IsRequired" />
-                        <label class="form-check-label text-danger">Required *</label>
-                    </div>
-                </div>
+                }
             </div>
 
             <div class="d-flex gap-2">
@@ -57,28 +39,72 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         let fieldIndex = 2;
 
         function addDropdown() {
             const field = `
-            <div class="dropdown-field mb-3 border p-2 rounded">
-                <label><strong>Level ${fieldIndex + 1}</strong></label>
-                <input type="hidden" name="Fields[${fieldIndex}].Label" value="Level ${fieldIndex + 1}" />
-                <select name="Fields[${fieldIndex}].SelectedOption" class="form-select mb-2">
-                    <option value="">Select Item</option>
-                    <option value="Option 1">Option 1</option>
-                    <option value="Option 2">Option 2</option>
-                    <option value="Option 3">Option 3</option>
-                </select>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="Fields[${fieldIndex}].IsRequired" />
-                    <label class="form-check-label text-danger">Required *</label>
-                </div>
-            </div>
-            `;
+                <div class="dropdown-field mb-3 border p-2 rounded">
+                    <label><strong>Level ${fieldIndex + 1}</strong></label>
+                    <input type="hidden" value="Level ${fieldIndex + 1}" />
+                    <select class="form-select mb-2">
+                        <option value="">Select Item</option>
+                        <option value="Option 1">Option 1</option>
+                        <option value="Option 2">Option 2</option>
+                        <option value="Option 3">Option 3</option>
+                    </select>
+                </div>`;
             document.getElementById('dropdownFields').insertAdjacentHTML('beforeend', field);
             fieldIndex++;
         }
+
+        document.getElementById("formBuilder").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formTitle = document.getElementById("formTitle").value.trim();
+            if (!formTitle) {
+                Swal.fire("Error", "Please enter a form title.", "error");
+                return;
+            }
+
+            const fields = [];
+            document.querySelectorAll(".dropdown-field").forEach((fieldDiv) => {
+                const label = fieldDiv.querySelector("input[type='hidden']").value;
+                const selectedOption = fieldDiv.querySelector("select").value;
+
+                fields.push({ label, selectedOption });
+            });
+
+            if (fields.length === 0) {
+                Swal.fire("Error", "Please add at least one dropdown field.", "error");
+                return;
+            }
+
+            // Optionally, validate fields here (e.g., check that selectedOption is not empty)
+
+            const formData = {
+                Title: formTitle,
+                Fields: fields
+            };
+
+            fetch('/Form/Create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire("Saved!", data.message, "success").then(() => {
+                            window.location.href = "/Form/Index";
+                        });
+                    } else {
+                        Swal.fire("Error", data.message, "error");
+                    }
+                })
+                .catch(() => Swal.fire("Error", "Something went wrong", "error"));
+        });
     </script>
 }

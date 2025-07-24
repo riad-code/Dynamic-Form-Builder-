@@ -1,5 +1,5 @@
-﻿using Dynamic_Form_Builder.Models;
-using Dynamic_Form_Builder.Data;
+﻿using Dynamic_Form_Builder.Data;
+using Dynamic_Form_Builder.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -15,39 +15,27 @@ namespace Dynamic_Form_Builder.Controllers
             _context = context;
         }
 
-       
         public async Task<IActionResult> Index()
         {
             var forms = await _context.Forms.ToListAsync();
             return View(forms);
         }
 
-       
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Form model)
+        public async Task<IActionResult> Create([FromBody] Form model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (model == null || string.IsNullOrWhiteSpace(model.Title) || model.Fields == null || !model.Fields.Any())
+            {
+                return Json(new { success = false, message = "Invalid form data." });
+            }
 
-            try
-            {
-                _context.Forms.Add(model);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index)); 
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error: " + ex.Message);
-                return View(model);
-            }
+            _context.Forms.Add(model);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Form created successfully!" });
         }
-
 
         public async Task<IActionResult> Edit(int id)
         {
@@ -60,19 +48,32 @@ namespace Dynamic_Form_Builder.Controllers
 
             return View(form);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Form model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
 
-            var form = await _context.Forms
-                .Include(f => f.Fields)
-                .FirstOrDefaultAsync(f => f.FormId == model.FormId);
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromBody] Form model)
+        {
+            if (model == null)
+                return Json(new { success = false, message = "Model is null." });
+
+            if (string.IsNullOrWhiteSpace(model.Title))
+                return Json(new { success = false, message = "Title is empty." });
+
+            if (model.Fields == null || !model.Fields.Any())
+                return Json(new { success = false, message = "No fields provided." });
+
+            foreach (var f in model.Fields)
+            {
+                if (string.IsNullOrWhiteSpace(f.Label))
+                    return Json(new { success = false, message = "A field label is empty." });
+                if (string.IsNullOrWhiteSpace(f.SelectedOption))
+                    return Json(new { success = false, message = "A field selected option is empty." });
+            }
+
+            var form = await _context.Forms.Include(f => f.Fields)
+                                           .FirstOrDefaultAsync(f => f.FormId == model.FormId);
 
             if (form == null)
-                return NotFound();
+                return Json(new { success = false, message = "Form not found." });
 
             form.Title = model.Title;
             form.Fields.Clear();
@@ -88,7 +89,8 @@ namespace Dynamic_Form_Builder.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index)); 
+
+            return Json(new { success = true, message = "Form updated successfully!" });
         }
 
 
@@ -96,7 +98,7 @@ namespace Dynamic_Form_Builder.Controllers
         public async Task<IActionResult> Preview(int id)
         {
             var form = await _context.Forms
-                .Include(f => f.Fields)  
+                .Include(f => f.Fields)
                 .FirstOrDefaultAsync(f => f.FormId == id);
 
             if (form == null)

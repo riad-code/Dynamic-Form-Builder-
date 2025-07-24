@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dynamic_Form_Builder.Models
 {
@@ -12,5 +12,4 @@ namespace Dynamic_Form_Builder.Models
 
         public List<DropdownField> Fields { get; set; } = new List<DropdownField>();
     }
-
 }
