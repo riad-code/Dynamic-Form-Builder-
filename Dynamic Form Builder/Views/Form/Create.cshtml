@@ -13,12 +13,13 @@
             </div>
 
             <div id="dropdownFields">
+              
                 @for (var i = 0; i < 2; i++)
                 {
                     <div class="dropdown-field mb-3 border p-2 rounded">
                         <label><strong>Level @(i + 1)</strong></label>
                         <input type="hidden" value="Level @(i + 1)" />
-                        <select class="form-select mb-2">
+                        <select class="form-select mb-2" required>
                             <option value="">Select Item</option>
                             <option value="Option 1">Option 1</option>
                             <option value="Option 2">Option 2</option>
@@ -43,7 +44,6 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         let fieldIndex = 2;
 
@@ -52,7 +52,7 @@
                 <div class="dropdown-field mb-3 border p-2 rounded">
                     <label><strong>Level ${fieldIndex + 1}</strong></label>
                     <input type="hidden" value="Level ${fieldIndex + 1}" />
-                    <select class="form-select mb-2">
+                    <select class="form-select mb-2" required>
                         <option value="">Select Item</option>
                         <option value="Option 1">Option 1</option>
                         <option value="Option 2">Option 2</option>
@@ -86,8 +86,8 @@
             });
 
             const formData = {
-                Title: formTitle,
-                Fields: fields
+                title: formTitle,
+                fields: fields
             };
 
             fetch('/Form/Create', {
@@ -95,19 +95,17 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire("Saved!", data.message, "success").then(() => {
-                            window.location.href = "/Form/Index"; // ✅ Go to main list page
-                        });
-                    } else {
-                        Swal.fire("Error", data.message, "error");
-                    }
-                })
-                .catch(() => {
-                    Swal.fire("Error", "Something went wrong", "error");
-                });
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire("Saved!", data.message, "success").then(() => {
+                        window.location.href = "/Form/Index";
+                    });
+                } else {
+                    Swal.fire("Error", data.message, "error");
+                }
+            })
+            .catch(() => Swal.fire("Error", "Something went wrong", "error"));
         });
     </script>
 }
