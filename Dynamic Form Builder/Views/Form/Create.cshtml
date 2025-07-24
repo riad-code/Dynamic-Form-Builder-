@@ -13,7 +13,6 @@
             </div>
 
             <div id="dropdownFields">
-                <!-- Default dropdowns -->
                 @for (var i = 0; i < 2; i++)
                 {
                     <div class="dropdown-field mb-3 border p-2 rounded">
@@ -25,6 +24,10 @@
                             <option value="Option 2">Option 2</option>
                             <option value="Option 3">Option 3</option>
                         </select>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" />
+                            <label class="form-check-label text-danger">Required *</label>
+                        </div>
                     </div>
                 }
             </div>
@@ -55,6 +58,10 @@
                         <option value="Option 2">Option 2</option>
                         <option value="Option 3">Option 3</option>
                     </select>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" />
+                        <label class="form-check-label text-danger">Required *</label>
+                    </div>
                 </div>`;
             document.getElementById('dropdownFields').insertAdjacentHTML('beforeend', field);
             fieldIndex++;
@@ -73,16 +80,10 @@
             document.querySelectorAll(".dropdown-field").forEach((fieldDiv) => {
                 const label = fieldDiv.querySelector("input[type='hidden']").value;
                 const selectedOption = fieldDiv.querySelector("select").value;
+                const isRequired = fieldDiv.querySelector("input[type='checkbox']").checked;
 
-                fields.push({ label, selectedOption });
+                fields.push({ label, selectedOption, isRequired });
             });
-
-            if (fields.length === 0) {
-                Swal.fire("Error", "Please add at least one dropdown field.", "error");
-                return;
-            }
-
-            // Optionally, validate fields here (e.g., check that selectedOption is not empty)
 
             const formData = {
                 Title: formTitle,
@@ -98,13 +99,15 @@
                 .then(data => {
                     if (data.success) {
                         Swal.fire("Saved!", data.message, "success").then(() => {
-                            window.location.href = "/Form/Index";
+                            window.location.href = "/Form/Index"; // ✅ Go to main list page
                         });
                     } else {
                         Swal.fire("Error", data.message, "error");
                     }
                 })
-                .catch(() => Swal.fire("Error", "Something went wrong", "error"));
+                .catch(() => {
+                    Swal.fire("Error", "Something went wrong", "error");
+                });
         });
     </script>
 }

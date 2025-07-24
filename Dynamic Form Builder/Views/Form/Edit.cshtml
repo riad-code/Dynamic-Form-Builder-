@@ -12,17 +12,23 @@
         <input type="hidden" id="FormId" value="@Model.FormId" />
 
         <div class="mb-3">
-            <label for="FormTitle" class="form-label">Form Title</label>
-            <input id="FormTitle" class="form-control" value="@Model.Title" />
+            <label for="FormTitle" class="form-label">Form Title <span class="text-danger">*</span></label>
+            <input id="FormTitle" class="form-control" value="@Model.Title" required />
         </div>
 
         <div id="dropdownContainer">
             @for (int i = 0; i < Model.Fields.Count; i++)
             {
                 <div class="dropdown-field border rounded p-3 mb-3">
-                    <label class="form-label"><strong>@Model.Fields[i].Label</strong></label>
+                    <label class="form-label">
+                        <strong>@Model.Fields[i].Label</strong>
+                        @if (Model.Fields[i].IsRequired)
+                        {
+                            <span class="text-danger">*</span>
+                        }
+                    </label>
                     <input type="hidden" class="field-label" value="@Model.Fields[i].Label" />
-                    <select class="form-select mb-2 field-select">
+                    <select class="form-select mb-2 field-select" required>
                         <option value="">Select Item</option>
                         <option value="Option 1" selected="@(Model.Fields[i].SelectedOption == "Option 1" ? "selected" : null)">Option 1</option>
                         <option value="Option 2" selected="@(Model.Fields[i].SelectedOption == "Option 2" ? "selected" : null)">Option 2</option>
@@ -32,7 +38,6 @@
             }
         </div>
 
-        <!-- Add More button -->
         <button type="button" id="addMoreBtn" class="btn btn-info mb-3">Add More</button>
 
         <div class="mt-3">
@@ -48,18 +53,16 @@
 
     <script>
         $(document).ready(function () {
-            // Initialize field count based on existing dropdown fields
             let fieldIndex = $('#dropdownContainer .dropdown-field').length;
 
-            // Function to add new dropdown field dynamically
             function addDropdown() {
                 fieldIndex++;
                 const labelText = 'Level ' + fieldIndex;
                 const newFieldHtml = `
                     <div class="dropdown-field border rounded p-3 mb-3">
-                        <label class="form-label"><strong>${labelText}</strong></label>
+                        <label class="form-label"><strong>${labelText}</strong><span class="text-danger">*</span></label>
                         <input type="hidden" class="field-label" value="${labelText}" />
-                        <select class="form-select mb-2 field-select">
+                        <select class="form-select mb-2 field-select" required>
                             <option value="">Select Item</option>
                             <option value="Option 1">Option 1</option>
                             <option value="Option 2">Option 2</option>
@@ -70,14 +73,17 @@
                 $('#dropdownContainer').append(newFieldHtml);
             }
 
-            // Bind click on Add More button
             $('#addMoreBtn').click(function () {
                 addDropdown();
             });
 
-            // Submit handler for the form
             $('#editForm').submit(function (e) {
                 e.preventDefault();
+
+                if (!document.getElementById("editForm").checkValidity()) {
+                    document.getElementById("editForm").reportValidity();
+                    return;
+                }
 
                 var formObj = {
                     FormId: parseInt($('#FormId').val()),
@@ -92,18 +98,9 @@
                     formObj.Fields.push({
                         Label: label,
                         SelectedOption: selectedOption,
-                        IsRequired: false // or remove if your model doesn't use this
+                        IsRequired: true // All fields are required now
                     });
                 });
-
-                if (!formObj.Title) {
-                    Swal.fire('Error', 'Please enter a form title.', 'error');
-                    return;
-                }
-                if (formObj.Fields.length === 0) {
-                    Swal.fire('Error', 'Please add at least one field.', 'error');
-                    return;
-                }
 
                 $.ajax({
                     url: '@Url.Action("Edit", "Form")',
@@ -114,7 +111,7 @@
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Success',
+                                title: 'Saved!',
                                 text: response.message,
                                 timer: 2000,
                                 showConfirmButton: false
