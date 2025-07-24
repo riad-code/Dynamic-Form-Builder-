@@ -1,48 +1,95 @@
-📚 Project Highlight: Dynamic Form Builder System
- 🧑‍💻 Academic Project | 🏢 Developed at IUBAT
- 💡 Technologies Used: ASP.NET Core MVC, ADO.NET (Raw SQL), MS SQL Server, HTML/CSS, JavaScript, jQuery, AJAX, SweetAlert2
- 🖥️ IDE: Visual Studio 2022 | 🔐 Authentication: N/A (Single-user prototype)
-💡 Project Overview
- The Dynamic Form Builder is a fully functional, responsive web application where users can create, edit, and preview customizable forms by dynamically adding dropdown fields. It emphasizes real-time interactivity with AJAX + SweetAlert2 and stores data using ADO.NET with raw SQL (no EF Core or LINQ).
-This project showcases my ability to build form-based systems, implement raw SQL in a modern ASP.NET MVC environment, and manage data persistence securely.
-🎯 Project Objectives
- ✅ Allow users to dynamically create forms with multiple dropdown fields
- ✅ Save form title and field data using ADO.NET with raw SQL
- ✅ Enable form editing with pre-filled field values
- ✅ Provide a grid/list view of saved forms with preview links
- ✅ Preview form with required fields marked and selected options displayed
- ✅ Use SweetAlert2 for user-friendly confirmation dialogs
- ✅ Deliver a clean and responsive UI using Bootstrap and jQuery
-🧩 Module-Wise Features
-📝 Form Creation
-Add Form Title
-Dynamically add dropdown fields with predefined options
-Mark fields as required
-Save entire form via AJAX + ADO.NET backend
-🛠️ Form Editing
-Fetch and load form with dropdown values for editing
-Add/remove fields dynamically
-Update using raw SQL
-📋 Form Listing (Grid View)
-Display all saved forms
-Show Form ID, Title, and Preview button
-👁️ Form Preview
-View form layout with selected options
-Red asterisk (*) shown beside required fields
-Non-editable preview for reference
-💾 Backend & DB
-ADO.NET with Raw SQL used for all DB operations
-Insert, update, and delete operations without Entity Framework
-Stored in MS SQL Server
-📦 Technologies & Tools
-ASP.NET Core MVC
-jQuery, AJAX, SweetAlert2
-ADO.NET (SQLConnection, SQLCommand, SQLDataReader)
-SQL Server for form and field storage
-Visual Studio 2022
-📊 Bonus/Advanced
-✅ AJAX-based form submission (no page reload)
-✅ Full ADO.NET implementation (no LINQ/EF Core)
-✅ SweetAlert2 feedback for actions
-⬜ ViewComponent support (optional bonus, can be added)
-⬜ PDF/Excel Export (not included)
+# Dynamic Form Builder System
+
+📚 **Project Overview**  
+The Dynamic Form Builder is a fully functional, responsive ASP.NET Core MVC web application that allows users to create, edit, and preview customizable forms by dynamically adding dropdown fields. The system leverages AJAX and SweetAlert2 for real-time interactivity and uses ADO.NET with raw SQL for data persistence, avoiding Entity Framework or LINQ.
+
+---
+
+## 🧑‍💻 Project Details  
+- **Type:** Academic Project  
+- **Developed at:** IUBAT  
+- **Technologies Used:**  
+  - ASP.NET Core MVC  
+  - ADO.NET with Raw SQL (SQLConnection, SQLCommand, SQLDataReader)  
+  - MS SQL Server  
+  - HTML/CSS, JavaScript, jQuery, AJAX  
+  - SweetAlert2 for UI feedback  
+- **IDE:** Visual Studio 2022  
+- **Authentication:** Not implemented (Single-user prototype)
+
+---
+
+## 🎯 Objectives  
+- Allow users to dynamically create forms with multiple dropdown fields  
+- Save form title and dropdown field data using ADO.NET with raw SQL  
+- Enable editing of existing forms with pre-loaded data  
+- Display a grid/list of saved forms with preview options  
+- Preview forms with required fields clearly marked  
+- Provide user-friendly confirmations and alerts using SweetAlert2  
+- Responsive and clean UI with Bootstrap and jQuery  
+
+---
+
+## 🧩 Module Features  
+
+### Form Creation  
+- Input form title  
+- Add multiple dropdown fields dynamically  
+- Mark dropdowns as required  
+- Save form data asynchronously using AJAX  
+
+### Form Editing  
+- Load existing form data for editing  
+- Add, remove, or modify dropdown fields  
+- Update changes in database using raw SQL  
+
+### Form Listing (Grid View)  
+- Show all saved forms with Form ID and Title  
+- Provide Preview button for each form  
+
+### Form Preview  
+- Display form with dropdowns and selected values  
+- Highlight required fields with red asterisk (*)  
+- Non-editable view for user reference  
+
+### Backend & Database  
+- ADO.NET with raw SQL queries for all DB operations  
+- SQL Server database with two main tables:  
+  - `Forms` (FormId, Title)  
+  - `DropdownFields` (FieldId, FormId, Label, SelectedOption, IsRequired)  
+
+---
+
+## 📦 Technologies & Tools  
+- ASP.NET Core MVC  
+- jQuery, AJAX  
+- SweetAlert2  
+- ADO.NET  
+- Microsoft SQL Server  
+- Visual Studio 2022  
+
+---
+
+## 📊 Bonus / Advanced Features  
+- AJAX-based form submission with no page reload  
+- Full ADO.NET implementation (no EF Core or LINQ)  
+- SweetAlert2 for enhanced user experience  
+- Optional: ViewComponent support for dynamic dropdown rendering  
+- Optional: PDF/Excel export (not included)
+
+---
+
+## 🛠️ How to Run  
+1. Clone the repository  
+2. Configure your connection string in `appsettings.json` under `"DefaultConnection"`  
+3. Ensure your SQL Server database is created with necessary tables (Forms, DropdownFields)  
+4. Build and run the project in Visual Studio 2022  
+5. Use the web UI to create, edit, preview, and list dynamic forms  
+
+---
+
+
+
+-
+
+*Thank you for checking out the Dynamic Form Builder project!*
